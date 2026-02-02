@@ -3,13 +3,23 @@ package com.healthify.opdservice.DTO.request;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public class CreateConsultationRequest {
+    @NotNull(message = "cant be null")
     private boolean isFirstConsultation;
+    @NotNull(message = "cant be null")
     private String parentConsultationId;
+
     private String symptoms;
+    @Size(min=1, message = "at least one payment id required")
     private List<String> paymentId;
     private LocalDateTime time;
+    @NotNull(message = "cant be null")
     private String doctorName;
+    @NotNull(message = "cant be null")
     private String patientName;
 
     public String getPatientName() {

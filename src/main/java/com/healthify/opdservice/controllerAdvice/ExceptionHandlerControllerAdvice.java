@@ -5,8 +5,11 @@ import com.healthify.opdservice.api.exceptions.OPDServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.*;
+import java.util.*;
 
 import java.util.Locale;
 
@@ -23,6 +26,12 @@ public class ExceptionHandlerControllerAdvice {
         return ResponseEntity.status(apiErrorResponse.getStatusCode()).body(apiErrorResponse);
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<List<ApiErrorResponse>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex){
+        List<ApiErrorResponse> responses = createMethodArgumentNotValidExceptionResponse(ex);
+
+        return ResponseEntity.status(400).body(responses);
+    }
 
     private ApiErrorResponse createApiErrorResponse(OPDServiceException ex){
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse();
@@ -33,4 +42,18 @@ public class ExceptionHandlerControllerAdvice {
         apiErrorResponse.setStatusCode(500);
         return apiErrorResponse;
     }
+
+    private List<ApiErrorResponse> createMethodArgumentNotValidExceptionResponse(MethodArgumentNotValidException ex){
+        List<ApiErrorResponse> errorResponses = new ArrayList<>();
+        for (ObjectError e : ex.getAllErrors()) {
+
+            ApiErrorResponse res = new ApiErrorResponse();
+            res.setStatusCode(ex.getStatusCode().value());
+            res.setErrorMessage(e.toString());
+            System.out.println("***************"+e.toString());
+            errorResponses.add(res);
+        }
+        return errorResponses;
+    }
 }
+
