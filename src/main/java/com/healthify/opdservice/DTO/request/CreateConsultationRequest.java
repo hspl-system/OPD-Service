@@ -3,6 +3,8 @@ package com.healthify.opdservice.DTO.request;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.healthify.opdservice.util.validators.annotations.ListNotNull;
+import com.healthify.opdservice.util.validators.annotations.ValidateSymptoms;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -13,9 +15,12 @@ public class CreateConsultationRequest {
     @NotNull(message = "cant be null")
     private String parentConsultationId;
 
+    @ValidateSymptoms
     private String symptoms;
-    @Size(min=1, message = "at least one payment id required")
+
+    @ListNotNull
     private List<String> paymentId;
+
     private LocalDateTime time;
     @NotNull(message = "cant be null")
     private String doctorName;
