@@ -32,12 +32,7 @@ public class CreateConsultationFunc {
 
         //create uuid
         String uuid = UuidUtils.getnewUuid();
-        if(uuid == null){
-            logger.error("error generating uuid for consultation");
-            throw new OPDServiceException(UUID_NOT_GENERATED);
-        }else {
-            logger.info("created uuid: {}", uuid);
-        }
+
 
         //get doc uuid from db
         String docUuid = doctorData.getDoctorDataByName(consultation.getDoctorName());

@@ -3,17 +3,17 @@ package com.healthify.opdservice.Controller;
 import com.healthify.opdservice.DTO.request.CreateConsultationRequest;
 import com.healthify.opdservice.api.exceptions.OPDServiceException;
 import com.healthify.opdservice.controller.ConsultationController;
-import org.junit.jupiter.api.*;
 import com.healthify.opdservice.func.CreateConsultationFunc;
+import org.assertj.core.api.Assert;
+import org.junit.jupiter.api.*;
+import com.healthify.opdservice.func.CreateConsultationFuncTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +44,7 @@ public class ConsultationControllerTest {
         request.setParentConsultationId("test1d123");
         request.setSymptoms("caugh,cold");
         request.setPaymentId(payIDs);
+        request.setFirstConsultation(true);
 
     }
 
@@ -68,6 +69,24 @@ public class ConsultationControllerTest {
                 consultationController.createConsultation(request));
 
 
+    }
+
+    @Test
+    public void test_createConsultation_notFirst(){
+        List<String> payIDs = new ArrayList<>();
+        payIDs.add("123");
+
+        CreateConsultationRequest request = new CreateConsultationRequest();
+        request.setDoctorName("TestDoc");
+        request.setFirstConsultation(false);
+        request.setParentConsultationId("test1d123");
+        request.setSymptoms("caugh,cold");
+        request.setPaymentId(payIDs);
+
+        ResponseEntity<String> result = consultationController.createConsultation(request);
+
+        assertEquals(401, result.getStatusCode().value());
+        assertEquals("create a follow up",result.getBody());
     }
 
 

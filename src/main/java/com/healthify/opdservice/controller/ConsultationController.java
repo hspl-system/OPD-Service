@@ -28,10 +28,14 @@ public class ConsultationController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResponseEntity<String> createConsultation(@Valid @RequestBody  CreateConsultationRequest request){
 
-        String result = createConsultationFunc.createConsultation(request);
+        if(request.isFirstConsultation()) {
+            String result = createConsultationFunc.createConsultation(request);
+            return ResponseEntity.ok()
+                    .body(result);
+        }
 
-        return ResponseEntity.ok()
-                .body(result);
+
+        return ResponseEntity.status(401).body("create a follow up");
 
     }
 
