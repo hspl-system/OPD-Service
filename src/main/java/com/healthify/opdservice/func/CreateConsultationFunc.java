@@ -6,6 +6,9 @@ import com.healthify.opdservice.data.DoctorData;
 import com.healthify.opdservice.data.PatientData;
 import com.healthify.opdservice.entities.Consultation;
 import com.healthify.opdservice.api.exceptions.OPDServiceException;
+import com.healthify.opdservice.entities.Doctor;
+import com.healthify.opdservice.entities.Patient;
+import com.healthify.opdservice.entities.Payments;
 import com.healthify.opdservice.util.UuidUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,37 +38,37 @@ public class CreateConsultationFunc {
 
 
         //get doc uuid from db
-        String docUuid = doctorData.getDoctorDataByName(consultation.getDoctorName());
-        if(docUuid == null){
+        Doctor doc = doctorData.getDoctorDataByName(consultation.getDoctorName());
+        if(doc == null){
             logger.error("error fetching doctor info for name {}", consultation.getDoctorName());
             throw new OPDServiceException(DOCTOR_NOT_FOUND,consultation.getDoctorName());
         }else {
-            logger.info("git docs info {}", docUuid);
+            logger.info("git docs info {}", doc.getUuid());
         }
 
         //get patientID from db
-        String patientUuid = patientData.getPatientDataByName(consultation.getPatientName());
-        if(patientUuid == null){
+        Patient patient = patientData.getPatientDataByName(consultation.getPatientName());
+        if(patient == null){
             logger.error("error fetching patient info for name {}", consultation.getPatientName());
             throw new OPDServiceException(PATIENT_NOT_FOUND,consultation.getPatientName());
         }else {
-            logger.info("got patient info {}", patientUuid);
+            logger.info("got patient info {}", patient.getId());
         }
 
         // create Consultation obj
         Consultation consultationBuilder = new Consultation.Builder().setFirstConsultation(true)
                 .setUuid(uuid)
                 .setParentConsultationId(null)
-                .setMeds(null)
+                .setPrescription(null)
                 .setNotes(null)
-                .setDoctorId(docUuid)
-                .setPatientId(patientUuid)
+                .setDoctor(doc)
+                .setPatient(patient)
                 .setRooms(null)
-                .setPaymentId(consultation.getPaymentId())
+                .setPayments(null)
                 .setSymptoms(consultation.getSymptoms())
                 .setTime(LocalDateTime.now())
-                .setTestsIds(null)
-                .setMeds(null)
+                .setTests(null)
+                .setPrescription(null)
                 .setParentConsultationId(null)
                 .build();
         logger.info("created consultation for uuid: {}",consultationBuilder.getUuid());

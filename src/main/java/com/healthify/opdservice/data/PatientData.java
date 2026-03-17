@@ -4,6 +4,7 @@ import com.healthify.opdservice.entities.Patient;
 import com.healthify.opdservice.util.UuidUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -11,39 +12,11 @@ import java.util.List;
 
 @Component
 public class PatientData {
-    public  List<Patient> patientData = new ArrayList<>();
     private static Logger logger = LoggerFactory.getLogger(PatientData.class);
+    private final JdbcTemplate jdbcTemplate;
 
-    PatientData(){
-        //add hardcoded data until db is impl
-        Patient p1 = new Patient.Builder()
-                .setId(UuidUtils.getnewUuid())
-                .setName("Amit Kumar")
-                .setEmail("amit.kumar@gmail.com")
-                .setPhone(9876543210L)
-                .setPatientDetails(null)
-                .build();
-        Patient p2 = new Patient.Builder()
-                .setId(UuidUtils.getnewUuid())
-                .setName("Neha Singh")
-                .setEmail("neha.singh@gmail.com")
-                .setPhone(9123456789L)
-                .setPatientDetails(null)
-                .build();
-
-
-        Patient p3 = new Patient.Builder()
-                .setId(UuidUtils.getnewUuid())
-                .setName("Neha Singh")
-                .setEmail("neha.singh@gmail.com")
-                .setPhone(9123456789L)
-                .setPatientDetails(null)
-                .build();
-
-
-        patientData.add(p1);
-        patientData.add(p2);
-        patientData.add(p3);
+    PatientData(JdbcTemplate jdbcTemplate){
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     public String addPatientData(Patient data){
@@ -56,10 +29,18 @@ public class PatientData {
         return null;
     }
 
-    public String getPatientDataByName(String name){
+    public Patient getPatientDataByName(String name){
         //todo: impl this later, for now use hard coded data
-        logger.info("searching for: {}",name);
-        return patientData.stream().filter(p -> p.getName().equals(name)).peek(p->p.getName()).map(p->p.getId()).findFirst().orElse(null);
+        logger.info("searching patient details for: {}",name);
+        String query = "select patient_id from patient where name = ? ";
+        List<Patient> result = jdbcTemplate.query( query,
+                (rs, rowNum) -> {
+            return  new Patient.Builder().setId(rs.getString("patient_id")).build();
+                }
+                , name
+        );
+        logger.info("patient if for {} is : {}",name,result.stream().findFirst().get().getId());
+        return result.stream().findFirst().get();
     }
 
 

@@ -7,6 +7,8 @@ import com.healthify.opdservice.data.ConsultationData;
 import com.healthify.opdservice.data.DoctorData;
 import com.healthify.opdservice.data.PatientData;
 import com.healthify.opdservice.entities.Consultation;
+import com.healthify.opdservice.entities.Doctor;
+import com.healthify.opdservice.entities.Patient;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,8 +56,8 @@ public class CreateConsultationFuncTest {
     @Test
     public void test_createConsultation_success(){
 
-        when(doctorData.getDoctorDataByName(request.getDoctorName())).thenReturn("Doc123");
-        when(patientData.getPatientDataByName(request.getPatientName())).thenReturn("patient123");
+        when(doctorData.getDoctorDataByName(request.getDoctorName())).thenReturn(new Doctor.Builder().setUuid("uuid123").build());
+        when(patientData.getPatientDataByName(request.getPatientName())).thenReturn(new Patient.Builder().setId("patient123").build());
         when(consultationData.addConsultation(any(Consultation.class))).thenReturn("uuid123");
 
         String uuid = createConsultationFunc.createConsultation(request);
