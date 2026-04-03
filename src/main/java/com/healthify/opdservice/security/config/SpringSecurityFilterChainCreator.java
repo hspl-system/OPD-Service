@@ -72,7 +72,7 @@ public class SpringSecurityFilterChainCreator {
         http
                 .csrf(csrf -> csrf.disable())   // updated style
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/createUser").permitAll()
+                        .requestMatchers("/createUser","/register").permitAll()
                         .anyRequest().authenticated()   // IMPORTANT: fallback rule
                 )
                 .httpBasic(Customizer.withDefaults()); // updated style

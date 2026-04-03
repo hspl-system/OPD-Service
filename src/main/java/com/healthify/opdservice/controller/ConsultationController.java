@@ -39,6 +39,7 @@ public class ConsultationController {
 
     }
 
+
     //endpoint just to test cookies
     @RequestMapping(value = "/getCookies", method = RequestMethod.GET)
     public ResponseEntity<String> getCookies() {
