@@ -34,59 +34,9 @@ public class ConsultationController {
                     .body(result);
         }
 
-
         return ResponseEntity.status(401).body("create a follow up");
 
     }
 
 
-    //endpoint just to test cookies
-    @RequestMapping(value = "/getCookies", method = RequestMethod.GET)
-    public ResponseEntity<String> getCookies() {
-        String userName = null;
-
-        //get httpSvltRequest from thread
-        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = servletRequestAttributes.getRequest();
-
-        //get cookiees from request's header
-        if (request.getCookies() != null) {
-            for (Cookie c : request.getCookies()) {
-                if (c.getName().equals("UserName")) {
-                    userName = c.getValue();
-                } else {
-                    userName = ",UserName cookie not found";
-                }
-            }
-        } else {
-            userName = ",Please enable cookies";
-        }
-
-        //get sessionAttribute val
-        HttpSession sess = request.getSession();
-        String val = (String) sess.getAttribute("key1");
-
-
-        return ResponseEntity.ok("hello " + userName+" also has: "+val);
-    }
-
-    @RequestMapping(value = "/home")
-    public ResponseEntity<String> home(){
-        //get ServletRequest to read custom header
-        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest requestSvlt = requestAttributes.getRequest();
-        logger.info("*******custom Header************ {}", requestSvlt.getHeader("custom"));
-
-        //Create a cookiee and send it in responseEntity
-        ResponseCookie cookie = ResponseCookie.from("UserName", "defaultUser")
-                .httpOnly(true)
-                .path("/")
-                .maxAge(24 * 60 * 60) // 1 day
-                .build();
-
-        //Add a session atribute
-        HttpSession session = requestSvlt.getSession();
-        session.setAttribute("key1", "sessionAttrVal");
-
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body("welcome");   }
 }

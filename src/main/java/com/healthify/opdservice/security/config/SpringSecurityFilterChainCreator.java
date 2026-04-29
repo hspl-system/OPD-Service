@@ -24,20 +24,11 @@ public class SpringSecurityFilterChainCreator {
 
     @Bean()
     public UserDetailsManager userDetailsManager(){
-        /**
-
-         SimpleGrantedAuthority:
-         */
 
         List<GrantedAuthority> authorityList = new ArrayList<>();
         authorityList.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
 
 
-
-        /**
-         *
-         *
-         **/
         UserDetails userDetails = User.builder()
                 .username("teja")
                 .password("teja123")
@@ -45,12 +36,6 @@ public class SpringSecurityFilterChainCreator {
                 .build();
 
 
-        /**
-         *
-         * UserDetailsManager
-
-         *
-         */
         UserDetailsManager userDetailsManager = new InMemoryUserDetailsManager();
         userDetailsManager.createUser(userDetails);
         return userDetailsManager;
@@ -60,24 +45,20 @@ public class SpringSecurityFilterChainCreator {
     //use no encryption until this is learnt in depth, just to remove exe
     @Bean
     PasswordEncoder passwordEncoder(){
-        /**
-         *
-         */
-
-        return NoOpPasswordEncoder.getInstance();
+              return NoOpPasswordEncoder.getInstance();
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
+        return http
                 .csrf(csrf -> csrf.disable())   // updated style
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/createUser","/register").permitAll()
                         .anyRequest().authenticated()   // IMPORTANT: fallback rule
                 )
-                .httpBasic(Customizer.withDefaults()); // updated style
+                .httpBasic(Customizer.withDefaults()).build(); // updated style
 
-        return http.build();
+
     }
 
 }
