@@ -1,7 +1,11 @@
-package com.healthify.opdservice.security.config;
+package com.healthify.opdservice.config.security;
 
+import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -21,6 +26,10 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityFilterChainCreator {
+
+    @Autowired
+    @Qualifier("userDataSource")
+    private HikariDataSource userDataSource;
 
     @Bean()
     public UserDetailsManager userDetailsManager(){
@@ -59,6 +68,13 @@ public class SpringSecurityFilterChainCreator {
                 .httpBasic(Customizer.withDefaults()).build(); // updated style
 
 
+    }
+
+    @Primary
+    @Bean
+    public UserDetailsManager jdbcUserDetailsManager(){
+        UserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(userDataSource);
+        return jdbcUserDetailsManager;
     }
 
 }

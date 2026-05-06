@@ -3,6 +3,8 @@ package com.healthify.opdservice.controller;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,6 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -41,8 +42,8 @@ public class HelloWorldController {
 
     @RequestMapping(value = "/createUser",method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<String> createUSer(@RequestParam String userName, @RequestParam String password){
-        // create a validator to validate length and have spl char and alpha numeric captial and small letter
+    public ResponseEntity<String> createUSer(@RequestParam String userName ,@Valid @RequestParam @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z0-9]).{8,}$") String password){
+
         UserDetails userDetails = User.builder().username(userName).password(password).authorities(new ArrayList<>()).build();
 
         userDetailsManager.createUser(userDetails);

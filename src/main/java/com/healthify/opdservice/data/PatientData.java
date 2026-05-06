@@ -4,6 +4,7 @@ import com.healthify.opdservice.entities.Patient;
 import com.healthify.opdservice.util.UuidUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,7 @@ public class PatientData {
     private static Logger logger = LoggerFactory.getLogger(PatientData.class);
     private final JdbcTemplate jdbcTemplate;
 
-    PatientData(JdbcTemplate jdbcTemplate){
+    PatientData(@Qualifier("opdJdbcTemplate") JdbcTemplate jdbcTemplate){
         this.jdbcTemplate = jdbcTemplate;
     }
 

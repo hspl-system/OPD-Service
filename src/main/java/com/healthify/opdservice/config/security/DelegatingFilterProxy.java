@@ -1,4 +1,4 @@
-package com.healthify.opdservice.security.config;
+package com.healthify.opdservice.config.security;
 
 import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
 
