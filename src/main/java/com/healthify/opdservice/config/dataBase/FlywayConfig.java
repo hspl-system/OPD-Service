@@ -12,7 +12,8 @@ public class FlywayConfig {
 
     @Bean(initMethod = "migrate")
     public Flyway opdFlyway(@Qualifier("opdDataSource")HikariDataSource opdDataSource){
-        Flyway opdFlyway =  Flyway.configure().dataSource(opdDataSource)
+        Flyway opdFlyway =  Flyway.configure()
+                .dataSource(opdDataSource)
                 .baselineOnMigrate(true)
                 .locations("classpath:db/migration/opdService")
                 .load();

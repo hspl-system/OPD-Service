@@ -19,6 +19,7 @@ public class ExceptionHandlerControllerAdvice {
     @Autowired
     MessageSource messageSource;
 
+    //custom Exception
     @ExceptionHandler(OPDServiceException.class)
     public ResponseEntity<ApiErrorResponse> handleOPDException(OPDServiceException ex){
         ApiErrorResponse apiErrorResponse = createApiErrorResponse(ex);
@@ -26,6 +27,7 @@ public class ExceptionHandlerControllerAdvice {
         return ResponseEntity.status(apiErrorResponse.getStatusCode()).body(apiErrorResponse);
     }
 
+    //validation Exception
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<List<ApiErrorResponse>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex){
         List<ApiErrorResponse> responses = createMethodArgumentNotValidExceptionResponse(ex);

@@ -1,5 +1,6 @@
 package com.healthify.opdservice.controller;
 
+import com.healthify.opdservice.DTO.request.RegisterUser;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -8,9 +9,12 @@ import jakarta.validation.constraints.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.UserDetailsManager;
@@ -20,6 +24,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class HelloWorldController {
@@ -27,7 +32,10 @@ public class HelloWorldController {
     public static final Logger logger = LoggerFactory.getLogger(HelloWorldController.class);
 
     @Autowired
-    UserDetailsManager userDetailsManager;
+    @Qualifier("jdbcUserDetailsManager")
+    UserDetailsManager jdbcUserDetailsManager;
+
+    //create custom login,logout pages
 
     @RequestMapping("/hello")
     @ResponseBody
@@ -42,13 +50,18 @@ public class HelloWorldController {
 
     @RequestMapping(value = "/createUser",method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<String> createUSer(@RequestParam String userName ,@Valid @RequestParam @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z0-9]).{8,}$") String password){
+    public ResponseEntity<String> createUSer(@Valid RegisterUser registerUser){
+        List<GrantedAuthority> athorities = new ArrayList<>();
+        athorities.add(new SimpleGrantedAuthority("USER"));
 
-        UserDetails userDetails = User.builder().username(userName).password(password).authorities(new ArrayList<>()).build();
+        UserDetails userDetails = User.builder()
+                .username(registerUser.getUserName())
+                .password(registerUser.getPassword())
+                .authorities(athorities).build();
 
-        userDetailsManager.createUser(userDetails);
+        jdbcUserDetailsManager.createUser(userDetails);
 
-        return ResponseEntity.ok().body("Created User "+userName);
+        return ResponseEntity.ok().body("Created User "+registerUser.getUserName());
     }
 
 

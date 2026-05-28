@@ -40,7 +40,7 @@ public class DataSourceConfig {
         userDataSourceConfig.setJdbcUrl("jdbc:mysql://localhost:3306/authDb");
         userDataSourceConfig.setUsername("admin");
         userDataSourceConfig.setPassword("admin123");
-        userDataSourceConfig.setDataSourceClassName("com.mysql.cj.jdbc.Driver");
+        userDataSourceConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
 
         return userDataSourceConfig;
     }

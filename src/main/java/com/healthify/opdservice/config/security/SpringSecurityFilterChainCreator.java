@@ -31,25 +31,25 @@ public class SpringSecurityFilterChainCreator {
     @Qualifier("userDataSource")
     private HikariDataSource userDataSource;
 
-    @Bean()
-    public UserDetailsManager userDetailsManager(){
-
-        List<GrantedAuthority> authorityList = new ArrayList<>();
-        authorityList.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-
-
-        UserDetails userDetails = User.builder()
-                .username("teja")
-                .password("teja123")
-                .authorities(authorityList)
-                .build();
-
-
-        UserDetailsManager userDetailsManager = new InMemoryUserDetailsManager();
-        userDetailsManager.createUser(userDetails);
-        return userDetailsManager;
-
-    }
+//    @Bean()
+//    public UserDetailsManager userDetailsManager(){
+//
+//        List<GrantedAuthority> authorityList = new ArrayList<>();
+//        authorityList.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+//
+//
+//        UserDetails userDetails = User.builder()
+//                .username("teja")
+//                .password("teja123")
+//                .authorities(authorityList)
+//                .build();
+//
+//
+//        UserDetailsManager userDetailsManager = new InMemoryUserDetailsManager();
+//        userDetailsManager.createUser(userDetails);
+//        return userDetailsManager;
+//
+//    }
 
     //use no encryption until this is learnt in depth, just to remove exe
     @Bean
@@ -62,10 +62,12 @@ public class SpringSecurityFilterChainCreator {
         return http
                 .csrf(csrf -> csrf.disable())   // updated style
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/createUser","/register").permitAll()
+                        .requestMatchers("/createUser","/register","/error").permitAll()
                         .anyRequest().authenticated()   // IMPORTANT: fallback rule
                 )
-                .httpBasic(Customizer.withDefaults()).build(); // updated style
+                .httpBasic(Customizer.withDefaults())
+        .formLogin(Customizer.withDefaults()).build();
+        // updated style
 
 
     }
