@@ -5,6 +5,8 @@ import com.healthify.opdservice.api.exceptions.OPDServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,6 +35,27 @@ public class ExceptionHandlerControllerAdvice {
         List<ApiErrorResponse> responses = createMethodArgumentNotValidExceptionResponse(ex);
 
         return ResponseEntity.status(400).body(responses);
+    }
+
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiErrorResponse> handleBadCredentialsException(BadCredentialsException ex){
+
+        ApiErrorResponse response = new ApiErrorResponse();
+        response.setStatusCode(401);
+        response.setErrorMessage(ex.getMessage());
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+
+    }
+
+    @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleAuthenticationCreadentialException(AuthenticationCredentialsNotFoundException ex){
+
+        ApiErrorResponse response = new ApiErrorResponse();
+        response.setStatusCode(401);
+        response.setErrorMessage(ex.getMessage());
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+
     }
 
     private ApiErrorResponse createApiErrorResponse(OPDServiceException ex){

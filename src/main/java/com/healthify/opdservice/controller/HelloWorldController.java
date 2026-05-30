@@ -1,11 +1,10 @@
 package com.healthify.opdservice.controller;
 
-import com.healthify.opdservice.DTO.request.RegisterUser;
+import com.healthify.opdservice.DTO.security.RegisterUser;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

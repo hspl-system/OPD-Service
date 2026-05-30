@@ -1,12 +1,18 @@
 package com.healthify.opdservice.config.security;
 
+import com.healthify.opdservice.util.utils.SecurityUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,13 +21,18 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+import javax.crypto.SecretKey;
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Configuration
 @EnableWebSecurity
@@ -31,25 +42,6 @@ public class SpringSecurityFilterChainCreator {
     @Qualifier("userDataSource")
     private HikariDataSource userDataSource;
 
-//    @Bean()
-//    public UserDetailsManager userDetailsManager(){
-//
-//        List<GrantedAuthority> authorityList = new ArrayList<>();
-//        authorityList.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-//
-//
-//        UserDetails userDetails = User.builder()
-//                .username("teja")
-//                .password("teja123")
-//                .authorities(authorityList)
-//                .build();
-//
-//
-//        UserDetailsManager userDetailsManager = new InMemoryUserDetailsManager();
-//        userDetailsManager.createUser(userDetails);
-//        return userDetailsManager;
-//
-//    }
 
     //use no encryption until this is learnt in depth, just to remove exe
     @Bean
@@ -62,12 +54,12 @@ public class SpringSecurityFilterChainCreator {
         return http
                 .csrf(csrf -> csrf.disable())   // updated style
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/createUser","/register","/error").permitAll()
+                        .requestMatchers("/createUser","/register","/error","/security/*").permitAll()
                         .anyRequest().authenticated()   // IMPORTANT: fallback rule
                 )
-                .httpBasic(Customizer.withDefaults())
-        .formLogin(Customizer.withDefaults()).build();
-        // updated style
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(Customizer.withDefaults())).build();
+
 
 
     }
@@ -79,4 +71,19 @@ public class SpringSecurityFilterChainCreator {
         return jdbcUserDetailsManager;
     }
 
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+
+        return configuration.getAuthenticationManager();
+    }
+
+    @Bean("authTokenDecoder")
+    public JwtDecoder jwtDecoder(@Value("${dev.jwt.secret}") String secret){
+
+        SecretKey key = (SecretKey) SecurityUtils.buildKeyFromSecret(secret);
+
+        JwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(key).build();
+
+        return jwtDecoder;
+    }
 }

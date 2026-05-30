@@ -1,4 +1,4 @@
-package com.healthify.opdservice.DTO.request;
+package com.healthify.opdservice.DTO.security;
 
 import com.healthify.opdservice.util.validators.annotations.PasswordValidator;
 
