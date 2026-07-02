@@ -58,12 +58,25 @@ public class SpringSecurityFilterChainCreator {
                         .anyRequest().authenticated()   // IMPORTANT: fallback rule
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(Customizer.withDefaults())).build();
+                        .jwt(Customizer.withDefaults()))
+                .oauth2Login(Customizer.withDefaults()).build();
 
 
 
     }
 
+
+    /**
+     * Provides a UserDetailsManager backed by the application's user database.
+     *
+     * During username/password authentication (before issuing a JWT),
+     * Spring Security's AuthenticationManager delegates to a
+     * DaoAuthenticationProvider, which uses this bean to load the user
+     * and validate the supplied credentials.
+     *
+     * This bean is not used for validating JWTs on subsequent requests;
+     * those are authenticated by the JwtDecoder.
+     */
     @Primary
     @Bean
     public UserDetailsManager jdbcUserDetailsManager(){

@@ -28,4 +28,10 @@ public class SecurityController {
     @GetMapping("/login")
     public String login(){  return "login"; }
 
+    @GetMapping("/authenticated")
+    @ResponseBody
+    public String authenticated(){
+        return "authuenticated";
+    }
+
 }
