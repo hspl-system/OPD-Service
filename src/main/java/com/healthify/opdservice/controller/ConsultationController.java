@@ -38,5 +38,10 @@ public class ConsultationController {
 
     }
 
+    @RequestMapping(value = "/test/get", method = RequestMethod.GET)
+    public String hello(){
+        return "Hello OPD service is working as expected";
+    }
+
 
 }
