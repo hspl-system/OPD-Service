@@ -54,12 +54,12 @@ public class SpringSecurityFilterChainCreator {
         return http
                 .csrf(csrf -> csrf.disable())   // updated style
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/createUser","/register","/error","/security/*").permitAll()
+                        .requestMatchers("/createUser","/register","/error","/security/*","/hello").permitAll()
                         .anyRequest().authenticated()   // IMPORTANT: fallback rule
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(Customizer.withDefaults()))
-                .oauth2Login(Customizer.withDefaults()).build();
+                        .jwt(Customizer.withDefaults()))// this means that the barrer token is provided by a resource already that we configured and now we are just validating jwt
+                .oauth2Login(Customizer.withDefaults()).build(); // this means that the app supports jwt and also expects algo to verify jwt using jwtdecoderFilter.
 
 
 
@@ -90,13 +90,13 @@ public class SpringSecurityFilterChainCreator {
         return configuration.getAuthenticationManager();
     }
 
-    @Bean("authTokenDecoder")
-    public JwtDecoder jwtDecoder(@Value("${dev.jwt.secret}") String secret){
-
-        SecretKey key = (SecretKey) SecurityUtils.buildKeyFromSecret(secret);
-
-        JwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(key).build();
-
-        return jwtDecoder;
-    }
+//    @Bean("authTokenDecoder")
+//    public JwtDecoder jwtDecoder(@Value("${dev.jwt.secret}") String secret){
+//
+//        SecretKey key = (SecretKey) SecurityUtils.buildKeyFromSecret(secret);
+//
+//        JwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(key).build();
+//
+//        return jwtDecoder;
+//    }
 }
