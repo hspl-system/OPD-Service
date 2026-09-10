@@ -38,8 +38,16 @@ public class HelloWorldController {
 
     @RequestMapping("/hello")
     @ResponseBody
-    public String helloWorld(){
-        return "hello world!!";
+    public String helloWorld() throws InterruptedException {
+
+            System.out.println("Request started by: " + Thread.currentThread().getName());
+
+            // Hold the request for 4 minutes
+            Thread.sleep(4 * 60 * 1000);
+
+            System.out.println("Request completed by: " + Thread.currentThread().getName());
+
+            return "hello world!!";
     }
 
     @RequestMapping("/register")
